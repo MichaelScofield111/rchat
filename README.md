@@ -2,4 +2,6 @@
 
 Building a High-Performance Chat Service
 
-![Rchat banner image](./assets/rchat_logo.png)
+<p align="center">
+<img src="assets/rchat_logo.png" alt="rchat image" />
+</p>
