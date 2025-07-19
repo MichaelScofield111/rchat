@@ -48,8 +48,15 @@ jobs:
           args: -vv --latest --strip header
         env:
           OUTPUT: CHANGES.md
+      - name: Read changelog
+        if: startsWith(github.ref, 'refs/tags/')
+        id: changelog
+        run: |
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          cat CHANGES.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          body: ${{ steps.git-cliff.outputs.content }}
+          body: ${{ steps.changelog.outputs.content }}
