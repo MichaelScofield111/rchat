@@ -1,2 +1,12 @@
 server:
   port: 6688
+  db_url: postgres://qianbao:postgres@localhost:5432/chat
+auth:
+  sk: |
+    -----BEGIN PRIVATE KEY-----
+    MC4CAQAwBQYDK2VwBCIEIFdhqSYO2/52IytT4QWjVm9iPvdxuFoN3DuYZ1BFY9p+
+    -----END PRIVATE KEY-----
+  pk: |
+    -----BEGIN PUBLIC KEY-----
+    MCowBQYDK2VwAyEAjSyq2e/YFU5ZAEBXPA7cRzbDO/ms2BK6smrH8/rYwG4=
+    -----END PUBLIC KEY-----
