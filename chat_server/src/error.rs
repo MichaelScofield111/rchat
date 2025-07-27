@@ -23,7 +23,7 @@ impl ErrorOutput {
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("email already exists: {0}")]
-    EmaliAlreadyExists(String),
+    EmailAlreadyExists(String),
 
     #[error("sql error: {0}")]
     SqlError(#[from] sqlx::Error),
@@ -41,7 +41,7 @@ pub enum AppError {
 impl IntoResponse for AppError {
     fn into_response(self) -> Response<axum::body::Body> {
         let status = match &self {
-            AppError::EmaliAlreadyExists(_) => StatusCode::CONFLICT,
+            AppError::EmailAlreadyExists(_) => StatusCode::CONFLICT,
             AppError::SqlError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::PasswordHashError(_) => StatusCode::UNPROCESSABLE_ENTITY,
             AppError::JwtError(_) => StatusCode::FORBIDDEN,

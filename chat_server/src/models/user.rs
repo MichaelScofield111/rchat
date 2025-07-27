@@ -56,7 +56,7 @@ impl User {
         // check if email exists
         let user = Self::find_by_email(&input.email, pool).await?;
         if user.is_some() {
-            return Err(AppError::EmaliAlreadyExists(input.email.clone()));
+            return Err(AppError::EmailAlreadyExists(input.email.clone()));
         }
 
         let user = sqlx::query_as(
@@ -133,8 +133,8 @@ fn verify_password(password: &str, password_hash: &str) -> Result<bool, AppError
 mod tests {
     use super::*;
     use anyhow::Result;
-    // use sqlx_db_tester::TestPg;
-    // use std::path::Path;
+    use sqlx_db_tester::TestPg;
+    use std::path::Path;
 
     #[test]
     fn hash_password_and_verify_should_work() -> Result<()> {
@@ -145,30 +145,50 @@ mod tests {
         Ok(())
     }
 
-    // #[tokio::test]
-    // async fn create_and_verify_user_should_work() -> Result<()> {
-    //     let tdb = TestPg::new(
-    //         "postgres://qianbao:postgres@localhost:5432".to_string(),
-    //         Path::new("../migrations"),
-    //     );
-    //     let pool = tdb.get_pool().await;
-    //     let email = "tchen@acme.org";
-    //     let name = "MichaelScofield";
-    //     let password = "hunter42";
-    //     let user = User::create(email, name, password, &pool).await?;
-    //     assert_eq!(user.email, email);
-    //     assert_eq!(user.fullname, name);
-    //     assert!(user.id > 0);
+    #[tokio::test]
+    async fn create_duplicate_user_should_fail() -> Result<()> {
+        let tdb = TestPg::new(
+            "postgres://postgres:postgres@localhost:5432".to_string(),
+            Path::new("../migrations"),
+        );
+        let pool = tdb.get_pool().await;
 
-    //     let user = User::find_by_email(email, &pool).await?;
-    //     assert!(user.is_some());
-    //     let user = user.unwrap();
-    //     assert_eq!(user.email, email);
-    //     assert_eq!(user.fullname, name);
+        let input = CreateUser::new("Tyr qian", "tchen@acme.org", "hunter42");
+        User::create(&input, &pool).await?;
+        let ret = User::create(&input, &pool).await;
+        match ret {
+            Err(AppError::EmailAlreadyExists(email)) => {
+                assert_eq!(email, input.email);
+            }
+            _ => panic!("Expecting EmailAlreadyExists error"),
+        }
+        Ok(())
+    }
 
-    //     let user = User::verify(email, password, &pool).await?;
-    //     assert!(user.is_some());
+    #[tokio::test]
+    async fn create_and_verify_user_should_work() -> Result<()> {
+        let tdb = TestPg::new(
+            "postgres://postgres:postgres@localhost:5432".to_string(),
+            Path::new("../migrations"),
+        );
+        let pool = tdb.get_pool().await;
 
-    //     Ok(())
-    // }
+        let input = CreateUser::new("Tyr qian", "tchen@acme.org", "hunter42");
+        let user = User::create(&input, &pool).await?;
+        assert_eq!(user.email, input.email);
+        assert_eq!(user.fullname, input.fullname);
+        assert!(user.id > 0);
+
+        let user = User::find_by_email(&input.email, &pool).await?;
+        assert!(user.is_some());
+        let user = user.unwrap();
+        assert_eq!(user.email, input.email);
+        assert_eq!(user.fullname, input.fullname);
+
+        let input = SigninUser::new(&input.email, &input.password);
+        let user = User::verify(&input, &pool).await?;
+        assert!(user.is_some());
+
+        Ok(())
+    }
 }
