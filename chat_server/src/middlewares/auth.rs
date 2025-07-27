@@ -25,14 +25,14 @@ pub async fn verify_token(State(state): State<AppState>, req: Request, next: Nex
                         req
                     }
                     Err(e) => {
-                        let msg = format!("verify token failed: {}", e);
+                        let msg = format!("verify token failed: {e}");
                         warn!(msg);
                         return (StatusCode::FORBIDDEN, msg).into_response();
                     }
                 }
             }
             Err(e) => {
-                let msg = format!("parse Authorization header failed: {}", e);
+                let msg = format!("parse Authorization header failed: {e}");
                 warn!(msg);
                 return (StatusCode::UNAUTHORIZED, msg).into_response();
             }
