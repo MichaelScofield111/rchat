@@ -8,6 +8,7 @@ POST http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
+    "workspace": "acme",
     "fullname": "test",
     "email": "test@test.com",
     "password": "123456"
@@ -38,3 +39,7 @@ Content-Type: application/json
     "email": "aaa@test.com",
     "password": "123456"
 }
+
+### get user list
+GET http://localhost:6688/api/users
+Authorization: Bearer {{token}}

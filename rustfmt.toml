@@ -12,6 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-max_width = 130
-fn_call_width = 90
-single_line_let_else_max_width = 100
+edition = "2024"
+style_edition = "2024"

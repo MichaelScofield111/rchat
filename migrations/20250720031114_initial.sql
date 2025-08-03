@@ -16,21 +16,21 @@ CREATE TYPE chat_type AS ENUM ('single', 'group', 'private_channel', 'public_cha
 
 -- create chat table
 CREATE TABLE IF NOT EXISTS chats (
-    id SERIAL PRIMARY KEY,
+    id bigserial PRIMARY KEY,
     name VARCHAR(128) NOT NULL UNIQUE,
     type chat_type NOT NULL,
     -- user id list
-    members BIGINT[] NOT NULL,
+    members bigint[] NOT NULL,
     created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
 -- crate message table
 CREATE TABLE IF NOT EXISTS messages (
-    id BIGSERIAL PRIMARY KEY,
-    chat_id BIGINT NOT NULL REFERENCES chats(id),
-    sender_id BIGINT NOT NULL REFERENCES users(id),
-    content TEXT NOT NULL,
-    images TEXT[],
+    id bigserial PRIMARY KEY,
+    chat_id bigint NOT NULL REFERENCES chats(id),
+    sender_id bigint NOT NULL REFERENCES users(id),
+    content text NOT NULL,
+    images text[],
     created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
